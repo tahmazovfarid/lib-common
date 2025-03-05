@@ -1,0 +1,84 @@
+plugins {
+    id 'checkstyle'
+    id 'java'
+    id 'maven-publish'
+    id 'java-library'
+}
+
+group = 'az.ailab'
+version = properties.projectVersion
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+sourceCompatibility = "17"
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    implementation "io.micrometer:micrometer-tracing:${micrometerVersion}"
+    implementation "io.micrometer:micrometer-tracing-bridge-brave:${micrometerVersion}"
+
+    implementation "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}"
+
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign:${springCloudVersion}"
+
+    api "io.github.openfeign:feign-annotation-error-decoder:${feignVersion}"
+    api "io.github.openfeign:feign-jackson:${feignVersion}"
+
+    api "org.springdoc:springdoc-openapi-ui:${openapiVersion}"
+    api "javax.validation:validation-api:${validationVersion}"
+    implementation "org.apache.commons:commons-collections4:${apacheCommonsCollectionVersion}"
+    implementation "commons-beanutils:commons-beanutils:${commonsBeanutilsVersion}"
+    implementation "org.apache.commons:commons-lang3:${apacheCommonsLangVersion}"
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar {
+    enabled true
+}
+
+wrapper {
+    gradleVersion = '7.3.2'
+}
+
+checkstyle {
+    toolVersion = "10.3.4"
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from project.components.java
+        }
+    }
+    repositories {
+        maven {
+            def snapshotUrl = 'https://nexus.ailab.local/repository/maven-snapshots/'
+            def releaseUrl = 'https://nexus.ailab.local/repository/maven-releases/'
+            url version.contains('-SNAPSHOT') ? snapshotUrl : releaseUrl
+            credentials {
+                username System.getenv("NEXUS_LOGIN")
+                password System.getenv("NEXUS_PASSWORD")
+            }
+        }
+    }
+}
