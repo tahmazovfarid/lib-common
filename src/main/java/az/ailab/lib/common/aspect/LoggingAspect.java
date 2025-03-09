@@ -8,9 +8,11 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 /**
@@ -24,6 +26,8 @@ import org.springframework.util.StringUtils;
  * - Logs exceptions, providing detailed stack traces in specific environments.
  * - Can be extended to customize pointcuts for different application layers.
  */
+@Component
+@Aspect
 @Slf4j
 @RequiredArgsConstructor
 public class LoggingAspect {
