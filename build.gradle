@@ -14,6 +14,9 @@ compileTestJava.options.encoding = "UTF-8"
 sourceCompatibility = properties.javaVersion
 
 java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
     withJavadocJar()
     withSourcesJar()
 }
