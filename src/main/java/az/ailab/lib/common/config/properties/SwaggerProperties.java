@@ -1,9 +1,9 @@
 package az.ailab.lib.common.config.properties;
 
 import az.ailab.lib.common.model.DocumentSample;
+import jakarta.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
-import javax.validation.Valid;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -49,6 +49,6 @@ public class SwaggerProperties {
     private String contactEmail;
     private String license;
     private String licenseUrl;
-    private List<@Valid DocumentSample> documentSamples;
+    private List<@Valid DocumentSample> documentSamples = new ArrayList<>();
 
 }

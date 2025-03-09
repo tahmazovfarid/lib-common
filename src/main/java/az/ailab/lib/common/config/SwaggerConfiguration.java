@@ -8,8 +8,8 @@ import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * Auto configuration for Swagger (OpenAPI) documentation.
@@ -39,9 +39,9 @@ import org.springframework.context.annotation.Bean;
  *   licenseUrl: "https://www.apache.org/licenses/LICENSE-2.0"
  * </pre>
  */
-@AutoConfiguration
+@Configuration
 @RequiredArgsConstructor
-public class SwaggerAutoConfiguration {
+public class SwaggerConfiguration {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String API_KEY_NAME = "JWT";

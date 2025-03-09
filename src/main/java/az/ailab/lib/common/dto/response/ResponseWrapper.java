@@ -1,12 +1,11 @@
 package az.ailab.lib.common.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
-
-import java.time.LocalDateTime;
 
 /**
  * A generic response wrapper for standardizing API responses.
@@ -20,7 +19,9 @@ import java.time.LocalDateTime;
  * <li>Encapsulates status code, timestamp, data, and errors.</li>
  * <li>Provides utility methods for success and error responses.</li>
  * </ul>
+ *
  * @param <T> The type of data included in the response.
+ *
  */
 @Data
 @NoArgsConstructor
@@ -34,7 +35,7 @@ public class ResponseWrapper<T> {
     private T error;
 
     public static <T> ResponseWrapper<T> ok(T data) {
-        return of(HttpStatus.OK, data);
+        return wrap(HttpStatus.OK, data);
     }
 
     public static <T> ResponseWrapper<T> error(T error) {
@@ -43,7 +44,7 @@ public class ResponseWrapper<T> {
         return errorResponse;
     }
 
-    public static <T> ResponseWrapper<T> of(HttpStatus status, T data) {
+    public static <T> ResponseWrapper<T> wrap(HttpStatus status, T data) {
         ResponseWrapper<T> successResponse = new ResponseWrapper<>();
         successResponse.setStatusCode(status.value());
         successResponse.setTimeStamp(LocalDateTime.now());

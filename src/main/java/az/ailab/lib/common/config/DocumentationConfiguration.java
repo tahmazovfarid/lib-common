@@ -1,15 +1,16 @@
 package az.ailab.lib.common.config;
 
 import az.ailab.lib.common.config.properties.SwaggerProperties;
+import az.ailab.lib.common.model.DocumentSample;
 import az.ailab.lib.common.util.ResourceUtil;
 import az.ailab.lib.common.util.SwaggerUtil;
 import io.swagger.v3.oas.models.examples.Example;
+import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.customizers.OpenApiCustomizer;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * Auto configuration for Swagger documentation.
@@ -38,11 +39,10 @@ import org.springframework.context.annotation.Bean;
  * - Simply add this library as a dependency.
  * - Configure the properties as shown above.
  * - Swagger will automatically include example requests and responses for API endpoints.
- *
  */
-@AutoConfiguration
+@Configuration
 @RequiredArgsConstructor
-public class DocumentationAutoConfiguration {
+public class DocumentationConfiguration {
 
     private static final String OK = "200";
     private static final String BAD_REQUEST = "400";
@@ -57,8 +57,9 @@ public class DocumentationAutoConfiguration {
      */
     @Bean
     public OpenApiCustomizer openApiCustomizer() {
+        List<DocumentSample> documentSamples = swaggerProperties.getDocumentSamples();
         return openApi -> {
-            swaggerProperties.getDocumentSamples().forEach(document -> {
+            documentSamples.forEach(document -> {
                 SwaggerUtil.getRequestBodyContent(openApi, document.getEndpoint())
                         .ifPresent(content -> document.getDocumentMap()
                                 .forEach((key, value) -> {

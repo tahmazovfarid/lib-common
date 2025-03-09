@@ -16,10 +16,8 @@ import org.springframework.util.StringUtils;
 /**
  * A logging aspect that provides automatic method entry, exit, and exception logging
  * for services and controllers.
- * <p>
- * This aspect logs method calls, execution time, and exceptions while allowing detailed
- * logging in specific environments like "local", "dev", "test", and "preprod".
- * </p>
+ * <p>This aspect logs method calls, execution time, and exceptions while allowing detailed
+ * logging in specific environments like "local", "dev", "test", and "preprod".</p>
  *
  * <h2>Features:</h2>
  * - Logs method entry and exit with arguments and return values (for debugging).
@@ -52,8 +50,7 @@ public class LoggingAspect {
      * In detailed logging mode, it logs the full exception stack trace.
      * Otherwise, it logs only the exception cause.
      * </p>
-     * <p>
-     * Example log output (detailed logging enabled):
+     * <p>Example log output (detailed logging enabled):</p>
      * <pre>
      * 2025-03-05T12:30:45.123 ERROR 12345 --- [main] az.ailab.service.UserService :
      * Exception in az.ailab.service.UserService.getUserById() with cause = 'java.sql.SQLException'
@@ -63,8 +60,7 @@ public class LoggingAspect {
      *     at az.ailab.service.UserService.getUserById(UserService.java:30)
      *     at az.ailab.controller.UserController.getUser(UserController.java:25)
      * </pre>
-     * <p>
-     * Example log output (detailed logging disabled):
+     * <p>Example log output (detailed logging disabled):</p>
      * <pre>
      * 2025-03-05T12:30:45.123 ERROR 12345 --- [main] az.ailab.service.UserService :
      * Exception in az.ailab.service.UserService.getUserById() with cause = java.sql.SQLException
@@ -96,8 +92,7 @@ public class LoggingAspect {
      * If debug logging is enabled, it logs method arguments before execution and
      * logs return values upon exit.
      * </p>
-     * <p>
-     * Example log output (method entry and exit):
+     * <p>Example log output (method entry and exit):</p>
      * <pre>
      * 2025-03-05T12:32:10.456 DEBUG 12345 --- [main] az.ailab.service.UserService :
      * Enter: az.ailab.service.UserService.getUserById() with argument[s] = [11]
@@ -105,8 +100,7 @@ public class LoggingAspect {
      * 2025-03-05T12:32:10.457 DEBUG 12345 --- [main] az.ailab.service.UserService :
      * Exit: az.ailab.service.UserService.getUserById() with result = User{id=11, name='Tahmazov Farid'}
      * </pre>
-     * <p>
-     * Example log output (illegal argument error):
+     * <p>Example log output (illegal argument error):</p>
      * <pre>
      * 2025-03-05T12:33:15.789 ERROR 12345 --- [main] az.ailab.service.UserService :
      * Illegal argument: [-1] in az.ailab.service.UserService.getUserById()
@@ -139,7 +133,7 @@ public class LoggingAspect {
     }
 
     /**
-     * Retrieve the root cause of an exception
+     * Retrieve the root cause of an exception.
      */
     private Object getExceptionCause(Throwable throwable) {
         Throwable rootCause = throwable;
@@ -150,7 +144,7 @@ public class LoggingAspect {
     }
 
     /**
-     * Determine if detailed logging is enabled based on current profiles
+     * Determine if detailed logging is enabled based on current profiles.
      */
     private boolean isDetailedLoggingEnabled() {
         return DETAILED_LOGGING_PROFILES.stream()

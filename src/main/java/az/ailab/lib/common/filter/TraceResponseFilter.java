@@ -33,6 +33,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Order
+@Component
 @RequiredArgsConstructor
 public class TraceResponseFilter implements Filter {
 

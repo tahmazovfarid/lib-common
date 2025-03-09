@@ -2,6 +2,8 @@ package az.ailab.lib.common.error;
 
 import az.ailab.lib.common.dto.response.ResponseWrapper;
 import jakarta.annotation.Resource;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -9,8 +11,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 /**
@@ -48,6 +47,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  * </ul>
  */
 @Slf4j
+@RestControllerAdvice
 public class CommonErrorHandler extends ResponseEntityExceptionHandler {
 
     @Resource
@@ -121,24 +121,6 @@ public class CommonErrorHandler extends ResponseEntityExceptionHandler {
     public ResponseWrapper<ErrorResponse> handleInternalServerError(Exception ex) {
         log.error("Error unexpected internal server error: code: {}, message: {}", HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
         var response = ErrorResponse.build(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Service Error");
-        return ResponseWrapper.error(response);
-    }
-
-    /**
-     * Handles file upload size limit exceeded errors.
-     * <p>
-     * When the uploaded file exceeds the maximum allowed size, this method
-     * logs the error and returns an HTTP status 413 (Payload Too Large).
-     * </p>
-     *
-     * @param ex the {@link MaxUploadSizeExceededException} instance
-     * @return a {@link ResponseWrapper} containing the {@link ErrorResponse}
-     */
-    @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
-    @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseWrapper<ErrorResponse> handleMaxSizeException(MaxUploadSizeExceededException ex) {
-        log.error("File upload error, message: {}", ex.getMessage());
-        var response = ErrorResponse.build(HttpStatus.PAYLOAD_TOO_LARGE, "Maximum allowed file size exceeded");
         return ResponseWrapper.error(response);
     }
 

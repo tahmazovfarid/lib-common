@@ -6,6 +6,7 @@ import az.ailab.lib.common.util.RequestContextUtil;
 import feign.error.FeignExceptionConstructor;
 import feign.error.ResponseBody;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,13 @@ public class ServiceException extends CommonException {
         super(status, RequestContextUtil.getPath(), RequestContextUtil.getMethod(), message,
                 LocalDateTime.now());
         this.code = code;
+    }
+
+    public ServiceException(String code, Integer status, String message, List<ValidationError> errors) {
+        super(status, RequestContextUtil.getPath(), RequestContextUtil.getMethod(), message,
+                LocalDateTime.now());
+        this.code = code;
+        this.errors = errors;
     }
 
     public ServiceException(HttpStatus status, String message) {
@@ -67,6 +75,23 @@ public class ServiceException extends CommonException {
 
     public static ServiceException forbidden(String message, Object... args) {
         return new ServiceException(HttpStatus.FORBIDDEN, resolveMessage(message, args));
+    }
+
+    public void addError(String property, String message) {
+        addError(new ValidationError(property, message));
+    }
+
+    public void addError(ValidationError error) {
+        if (errors.isEmpty()) {
+            errors = new ArrayList<>();
+        }
+        errors.add(error);
+    }
+
+    public void setErrors(List<ValidationError> errors) {
+        if (errors != null && errors.isEmpty()) {
+            this.errors = errors;
+        }
     }
 
     public void addDetail(String key, Object value) {

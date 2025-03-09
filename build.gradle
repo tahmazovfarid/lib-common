@@ -3,13 +3,20 @@ plugins {
     id 'java'
     id 'maven-publish'
     id 'java-library'
+    id 'org.springframework.boot' version '3.2.4'
+    id 'io.spring.dependency-management' version '1.1.4'
 }
 
 group = 'az.ailab'
 version = properties.projectVersion
 compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
-sourceCompatibility = "17"
+sourceCompatibility = properties.javaVersion
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
 
 configurations {
     compileOnly {
@@ -22,63 +29,65 @@ repositories {
 }
 
 dependencies {
+    api "io.micrometer:micrometer-tracing:${micrometerVersion}"
+    api "io.micrometer:micrometer-tracing-bridge-brave:${micrometerVersion}"
 
-    implementation "io.micrometer:micrometer-tracing:${micrometerVersion}"
-    implementation "io.micrometer:micrometer-tracing-bridge-brave:${micrometerVersion}"
+    api "org.springframework.boot:spring-boot-starter-actuator"
+    api "org.springframework.boot:spring-boot-starter-web"
+    api "org.springframework.boot:spring-boot-starter-aop"
+    api "org.springframework.boot:spring-boot-starter-validation"
 
-    implementation "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
-    implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
-    implementation "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}"
+    api "org.springframework.cloud:spring-cloud-starter-openfeign"
 
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+    api "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocVersion}"
+    api "io.swagger.core.v3:swagger-core-jakarta:${swaggerVersion}"
+    api "io.swagger.core.v3:swagger-models-jakarta:${swaggerVersion}"
 
-    implementation "org.springframework.cloud:spring-cloud-starter-openfeign:${springCloudVersion}"
+    api "io.github.openfeign:feign-annotation-error-decoder:${openFeignVersion}"
+    api "io.github.openfeign:feign-jackson:${openFeignVersion}"
 
-    api "io.github.openfeign:feign-annotation-error-decoder:${feignVersion}"
-    api "io.github.openfeign:feign-jackson:${feignVersion}"
-
-    api "org.springdoc:springdoc-openapi-ui:${openapiVersion}"
-    api "javax.validation:validation-api:${validationVersion}"
-    implementation "org.apache.commons:commons-collections4:${apacheCommonsCollectionVersion}"
-    implementation "commons-beanutils:commons-beanutils:${commonsBeanutilsVersion}"
-    implementation "org.apache.commons:commons-lang3:${apacheCommonsLangVersion}"
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
-    testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+}
+
+// Disable the bootJar task
+bootJar {
+    enabled = false
+}
+
+// Enable the jar task
+jar {
+    enabled = true
 }
 
 test {
     useJUnitPlatform()
 }
 
-jar {
-    enabled true
-}
-
 wrapper {
-    gradleVersion = '7.3.2'
+    gradleVersion = properties.gradleVersion
 }
 
 checkstyle {
-    toolVersion = "10.3.4"
+    toolVersion = checkStyleVersion
+}
+
+ext {
+    set('springCloudVersion', springCloudVersion)
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            from project.components.java
-        }
-    }
-    repositories {
-        maven {
-            def snapshotUrl = 'https://nexus.ailab.local/repository/maven-snapshots/'
-            def releaseUrl = 'https://nexus.ailab.local/repository/maven-releases/'
-            url version.contains('-SNAPSHOT') ? snapshotUrl : releaseUrl
-            credentials {
-                username System.getenv("NEXUS_LOGIN")
-                password System.getenv("NEXUS_PASSWORD")
-            }
+            from components.java
         }
     }
 }
