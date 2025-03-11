@@ -1,7 +1,6 @@
 package az.ailab.lib.common.aspect;
 
 import java.util.Arrays;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -10,8 +9,6 @@ import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.Profiles;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -32,18 +29,13 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 public class LoggingAspect {
 
-    private final Environment env;
-
     /**
-     * Profiles where detailed logging is enabled.
+     * Pointcut that applies to all classes under the az.ailab namespace,
+     * excluding the aspect classes themselves to prevent circular dependencies.
+     * <p>This includes all services, controllers, repositories, and other components
+     * defined within the application's packages.</p>
      */
-    private static final Set<String> DETAILED_LOGGING_PROFILES = Set.of("local", "dev", "test", "preprod");
-
-    /**
-     * Pointcut that applies to all services and REST controllers.
-     */
-    @Pointcut("within(@org.springframework.stereotype.Service *)" +
-            " || within(@org.springframework.web.bind.annotation.RestController *)")
+    @Pointcut("within(az.ailab..*) && !within(az.ailab.lib.common.aspect..*)")
     public void springBeanPointcut() {
         // Method is empty as this is just a Pointcut, the implementations are in the advices.
     }
@@ -75,15 +67,12 @@ public class LoggingAspect {
      */
     @AfterThrowing(pointcut = "springBeanPointcut()", throwing = "e")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable e) {
-        boolean isDetailedLoggingEnabled = isDetailedLoggingEnabled();
-
         String declaringType = joinPoint.getSignature().getDeclaringTypeName();
         String methodName = joinPoint.getSignature().getName();
         Object exceptionCause = getExceptionCause(e);
 
-        if (isDetailedLoggingEnabled) {
-            log.error("Exception in {}.{}() with cause = '{}' and exception = '{}'",
-                    declaringType, methodName, exceptionCause,
+        if (log.isDebugEnabled()) {
+            log.error("Exception in {}.{}() with cause = '{}' and exception = '{}'", declaringType, methodName, exceptionCause,
                     StringUtils.hasText(e.getMessage()) ? e.getMessage() : "No message", e);
         } else {
             log.error("Exception in {}.{}() with cause = {}", declaringType, methodName, exceptionCause);
@@ -145,14 +134,6 @@ public class LoggingAspect {
             rootCause = rootCause.getCause();
         }
         return rootCause.getClass().getName();
-    }
-
-    /**
-     * Determine if detailed logging is enabled based on current profiles.
-     */
-    private boolean isDetailedLoggingEnabled() {
-        return DETAILED_LOGGING_PROFILES.stream()
-                .anyMatch(profile -> env.acceptsProfiles(Profiles.of(profile)));
     }
 
 }
