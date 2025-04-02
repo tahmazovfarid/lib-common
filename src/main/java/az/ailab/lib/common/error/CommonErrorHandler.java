@@ -119,7 +119,14 @@ public class CommonErrorHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ResponseWrapper<ErrorResponse> handleInternalServerError(Exception ex) {
-        log.error("Error unexpected internal server error: code: {}, message: {}", HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        if (log.isDebugEnabled()) {
+            log.error("Error unexpected internal server error: code: {}, message: {}",
+                    HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex);
+        } else {
+            log.error("Error unexpected internal server error: code: {}, message: {}", HttpStatus.INTERNAL_SERVER_ERROR,
+                    ex.getMessage());
+        }
+
         var response = ErrorResponse.build(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Service Error");
         return ResponseWrapper.error(response);
     }
