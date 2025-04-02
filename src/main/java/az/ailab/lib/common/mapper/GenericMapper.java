@@ -14,7 +14,9 @@ import org.mapstruct.MappingTarget;
  * @param <E> Entity type - the domain model class
  * @param <R> Request DTO type - used for incoming data/requests
  * @param <S> Response DTO type - used for outgoing data/responses
+ *
  */
+@Deprecated(since = "1.0.2")
 public interface GenericMapper<E, R, S> {
 
     /**
