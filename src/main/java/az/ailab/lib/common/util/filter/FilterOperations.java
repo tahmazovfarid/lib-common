@@ -158,6 +158,20 @@ public final class FilterOperations {
     // Boolean operations
 
     /**
+     * Specification that always returns false.
+     */
+    public static <T> Specification<T> alwaysFalse() {
+        return (root, query, cb) -> cb.equal(cb.literal(1), 0);
+    }
+
+    /**
+     * Specification that always returns true.
+     */
+    public static <T> Specification<T> alwaysTrue() {
+        return (root, query, cb) -> cb.conjunction();
+    }
+
+    /**
      * Matches boolean value.
      */
     public static <T> Specification<T> isTrue(Boolean value, Function<Root<T>, Expression<Boolean>> fieldExtractor) {
