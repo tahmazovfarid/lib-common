@@ -1,9 +1,9 @@
 package az.ailab.lib.common.model.dto.request;
 
-import java.util.LinkedHashSet;
+import java.util.List;
 
 public interface SearchFilter {
 
-    LinkedHashSet<String> getAllowedSortFields();
+    List<String> getAllowedSortFields();
 
 }

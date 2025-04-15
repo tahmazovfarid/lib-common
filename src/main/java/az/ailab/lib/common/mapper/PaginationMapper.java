@@ -84,7 +84,7 @@ public final class PaginationMapper {
         final int effectivePage = page != null ? page : defaultPage;
         final int effectiveSize = size != null ? size : defaultSize;
 
-        final Sort sort = resolveSort(paginationRequest, searchFilter.getAllowedSortFields());
+        final Sort sort = resolveSort(paginationRequest, new LinkedHashSet<>(searchFilter.getAllowedSortFields()));
 
         return PageRequest.of(effectivePage, effectiveSize, sort);
     }
