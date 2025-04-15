@@ -1,4 +1,4 @@
-package az.ailab.lib.common.dto.response;
+package az.ailab.lib.common.model.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;

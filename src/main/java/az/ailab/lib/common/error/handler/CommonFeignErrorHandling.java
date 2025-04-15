@@ -1,5 +1,10 @@
-package az.ailab.lib.common.error;
+package az.ailab.lib.common.error.handler;
 
+import az.ailab.lib.common.error.ForbiddenException;
+import az.ailab.lib.common.error.InternalServerException;
+import az.ailab.lib.common.error.NotAuthenticatedException;
+import az.ailab.lib.common.error.ServiceException;
+import az.ailab.lib.common.error.ServiceUnavailableException;
 import feign.error.ErrorCodes;
 import feign.error.ErrorHandling;
 import java.lang.annotation.ElementType;

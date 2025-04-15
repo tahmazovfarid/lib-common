@@ -1,6 +1,6 @@
 package az.ailab.lib.common.config.properties;
 
-import az.ailab.lib.common.model.DocumentSample;
+import az.ailab.lib.common.model.vo.DocumentSample;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;

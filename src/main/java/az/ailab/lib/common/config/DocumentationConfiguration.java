@@ -1,11 +1,10 @@
 package az.ailab.lib.common.config;
 
 import az.ailab.lib.common.config.properties.SwaggerProperties;
-import az.ailab.lib.common.model.DocumentSample;
+import az.ailab.lib.common.model.vo.DocumentSample;
 import az.ailab.lib.common.util.ResourceUtil;
 import az.ailab.lib.common.util.SwaggerUtil;
 import io.swagger.v3.oas.models.examples.Example;
-import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.customizers.OpenApiCustomizer;

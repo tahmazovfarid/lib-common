@@ -1,4 +1,4 @@
-package az.ailab.lib.common.error;
+package az.ailab.lib.common.model.dto.response;
 
 public interface ErrorCode {
 

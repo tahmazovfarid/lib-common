@@ -1,6 +1,10 @@
-package az.ailab.lib.common.error;
+package az.ailab.lib.common.error.handler;
 
-import az.ailab.lib.common.dto.response.ResponseWrapper;
+import az.ailab.lib.common.error.CommonException;
+import az.ailab.lib.common.error.ServiceException;
+import az.ailab.lib.common.model.dto.response.ErrorResponse;
+import az.ailab.lib.common.model.dto.response.ResponseWrapper;
+import az.ailab.lib.common.model.dto.response.ValidationError;
 import jakarta.annotation.Resource;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -41,7 +45,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  * <ul>
  *   <li>Service and common exceptions</li>
  *   <li>Validation errors (request parameters, method arguments)</li>
- *   <li>File upload size exceeded errors</li>
  *   <li>Internal server and timeout errors</li>
  *   <li>etc..</li>
  * </ul>

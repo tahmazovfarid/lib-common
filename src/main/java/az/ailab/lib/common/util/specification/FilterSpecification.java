@@ -1,4 +1,4 @@
-package az.ailab.lib.common.util.filter;
+package az.ailab.lib.common.util.specification;
 
 import org.springframework.data.jpa.domain.Specification;
 

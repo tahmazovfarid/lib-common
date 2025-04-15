@@ -1,6 +1,7 @@
 package az.ailab.lib.common.error;
 
-import az.ailab.lib.common.dto.response.ResponseWrapper;
+import az.ailab.lib.common.model.dto.response.ErrorResponse;
+import az.ailab.lib.common.model.dto.response.ResponseWrapper;
 import feign.error.FeignExceptionConstructor;
 import feign.error.ResponseBody;
 import lombok.EqualsAndHashCode;
