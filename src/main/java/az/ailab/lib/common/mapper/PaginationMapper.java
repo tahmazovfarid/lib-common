@@ -1,7 +1,8 @@
 package az.ailab.lib.common.mapper;
 
-import az.ailab.lib.common.dto.request.PaginationRequest;
-import az.ailab.lib.common.dto.response.PaginationResponse;
+import az.ailab.lib.common.model.dto.request.PaginationRequest;
+import az.ailab.lib.common.model.dto.request.SearchFilter;
+import az.ailab.lib.common.model.dto.response.PaginationResponse;
 import io.micrometer.common.util.StringUtils;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -18,7 +19,7 @@ public final class PaginationMapper {
     }
 
     /**
-     * Generic method to map a Page to PaginationResponse using a mapper function
+     * Generic method to map a Page to PaginationResponse using a mapper function.
      *
      * @param page           Source JPA Page
      * @param mapperFunction Function to convert each entity to DTO
@@ -37,7 +38,7 @@ public final class PaginationMapper {
     }
 
     /**
-     * Overloaded method to map a Page using an existing mapped content list
+     * Overloaded method to map a Page using an existing mapped content list.
      *
      * @param page    Source JPA Page (for pagination metadata)
      * @param content Already mapped content list
@@ -54,8 +55,7 @@ public final class PaginationMapper {
     /**
      * Converts the current {@link PaginationRequest} to a Spring {@link Pageable} object with sorting,
      * based on the provided set of allowed sort fields.
-     * <p>
-     * Behavior summary:
+     * <p>Behavior summary:</p>
      * <ul>
      *     <li>If {@code allowedSortFields} is {@code null} or empty → returns {@link Sort#unsorted()}.</li>
      *     <li>If {@code sortBy} is {@code null}, blank, or not found in the {@code allowedSortFields} set →
@@ -63,8 +63,7 @@ public final class PaginationMapper {
      *     <li>If {@code direction} is {@code null}, blank, or equals {@code "desc"} (case-insensitive) →
      *         sorting is applied in {@link Sort.Direction#DESC} direction. Otherwise, {@link Sort.Direction#ASC} is used.</li>
      * </ul>
-     * <p>
-     * Example usage:
+     * <p>Example usage:</p>
      * <pre>
      * {@code
      * LinkedHashSet<String> allowedFields = new LinkedHashSet<>(List.of("createdAt", "name", "email"));
@@ -72,11 +71,11 @@ public final class PaginationMapper {
      * }
      * </pre>
      *
-     * @param allowedSortFields a non-empty set of valid fields to be used for sorting; order matters
+     * @param searchFilter for getting allowed a non-empty set of valid fields to be used for sorting; order matters
      * @return a {@link Pageable} instance with sorting applied, or unsorted if no valid field is found
      */
     public static Pageable toPageable(final PaginationRequest paginationRequest,
-                                      final LinkedHashSet<String> allowedSortFields) {
+                                      final SearchFilter searchFilter) {
         final int defaultPage = 0;
         final int defaultSize = 10;
         final Integer page = paginationRequest.page();
@@ -85,7 +84,7 @@ public final class PaginationMapper {
         final int effectivePage = page != null ? page : defaultPage;
         final int effectiveSize = size != null ? size : defaultSize;
 
-        final Sort sort = resolveSort(paginationRequest, allowedSortFields);
+        final Sort sort = resolveSort(paginationRequest, searchFilter.getAllowedSortFields());
 
         return PageRequest.of(effectivePage, effectiveSize, sort);
     }
@@ -99,9 +98,8 @@ public final class PaginationMapper {
         final String sortBy = paginationRequest.sortBy();
 
         final Sort.Direction direction = resolveDirection(paginationRequest.direction());
-        final String sortField = StringUtils.isBlank(sortBy) || !allowedSortFields.contains(sortBy)
-                ? allowedSortFields.iterator().next()
-                : sortBy.trim();
+        final String sortField = StringUtils.isBlank(sortBy) || !allowedSortFields.contains(sortBy) ?
+                allowedSortFields.iterator().next() : sortBy.trim();
 
         return Sort.by(direction, sortField);
     }

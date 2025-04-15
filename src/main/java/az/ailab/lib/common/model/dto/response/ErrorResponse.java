@@ -1,5 +1,6 @@
-package az.ailab.lib.common.error;
+package az.ailab.lib.common.model.dto.response;
 
+import az.ailab.lib.common.error.ServiceException;
 import az.ailab.lib.common.util.RequestContextUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotNull;

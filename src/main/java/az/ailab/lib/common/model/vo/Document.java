@@ -1,4 +1,4 @@
-package az.ailab.lib.common.model;
+package az.ailab.lib.common.model.vo;
 
 import lombok.Data;
 

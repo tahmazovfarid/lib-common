@@ -1,6 +1,6 @@
 package az.ailab.lib.common.util;
 
-import az.ailab.lib.common.enums.Language;
+import az.ailab.lib.common.model.enums.Language;
 import java.util.Optional;
 import org.springframework.http.HttpHeaders;
 

@@ -1,6 +1,9 @@
 package az.ailab.lib.common.error;
 
-import az.ailab.lib.common.dto.response.ResponseWrapper;
+import az.ailab.lib.common.model.dto.response.ErrorCode;
+import az.ailab.lib.common.model.dto.response.ErrorResponse;
+import az.ailab.lib.common.model.dto.response.ResponseWrapper;
+import az.ailab.lib.common.model.dto.response.ValidationError;
 import az.ailab.lib.common.util.MessageUtil;
 import az.ailab.lib.common.util.RequestContextUtil;
 import feign.error.FeignExceptionConstructor;
@@ -13,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

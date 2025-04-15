@@ -1,4 +1,4 @@
-package az.ailab.lib.common.enums;
+package az.ailab.lib.common.model.enums;
 
 public enum Language {
 

@@ -1,4 +1,4 @@
-package az.ailab.lib.common.error;
+package az.ailab.lib.common.model.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

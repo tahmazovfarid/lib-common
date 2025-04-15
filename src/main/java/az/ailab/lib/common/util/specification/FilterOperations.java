@@ -1,4 +1,4 @@
-package az.ailab.lib.common.util.filter;
+package az.ailab.lib.common.util.specification;
 
 import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -22,35 +22,36 @@ public final class FilterOperations {
 
     }
 
-    // Object operations
     /**
      * Checks if an object's field equals a given value.
+     *
+     * <pre>
+     * {@code
+     * Specification<User> spec = equalsObject(role, root -> root.get("role"));
+     * }
+     * </pre>
      *
      * @param value          The value to match
      * @param fieldExtractor Function to extract the field from root
      * @return Specification with equals condition
-     *
-     * <pre>{@code
-     * Specification<User> spec = equalsObject(role, root -> root.get("role"));
-     * }</pre>
      */
     public static <T, O> Specification<T> equalsObject(O value, Function<Root<T>, Expression<O>> fieldExtractor) {
         return value == null ? null :
                 (root, query, cb) -> cb.equal(fieldExtractor.apply(root), value);
     }
 
-    // String operations
-
     /**
      * Matches field that contains the given value (case-insensitive).
+     *
+     * <pre>
+     * {@code
+     * contains("Farid", root -> root.get("firstName"));
+     * }
+     * </pre>
      *
      * @param value          Substring to search for
      * @param fieldExtractor Field extractor
      * @return Specification or null if value is empty
-     *
-     * <pre>{@code
-     * contains("Farid", root -> root.get("firstName"))
-     * }</pre>
      */
     public static <T> Specification<T> contains(String value, Function<Root<T>, Expression<String>> fieldExtractor) {
         return isEmpty(value) ? null :
@@ -86,23 +87,21 @@ public final class FilterOperations {
     }
 
     /**
-     * Matches if string does not equal the given value (case-insensitive).
-     */
-    public static <T> Specification<T> notEquals(String value, Function<Root<T>, Expression<String>> fieldExtractor) {
-        return isEmpty(value) ? null :
-                (root, query, cb)
-                        -> cb.notEqual(cb.lower(fieldExtractor.apply(root)), value.toLowerCase());
-    }
-
-    // Number operations
-
-    /**
      * Checks equality of number.
      */
     public static <T, N extends Number> Specification<T> equals(N value, Function<Root<T>, Expression<N>> fieldExtractor) {
         return value == null ? null :
                 (root, query, cb)
                         -> cb.equal(fieldExtractor.apply(root), value);
+    }
+
+    /**
+     * Matches if string does not equal the given value (case-insensitive).
+     */
+    public static <T> Specification<T> notEquals(String value, Function<Root<T>, Expression<String>> fieldExtractor) {
+        return isEmpty(value) ? null :
+                (root, query, cb)
+                        -> cb.notEqual(cb.lower(fieldExtractor.apply(root)), value.toLowerCase());
     }
 
     /**
@@ -186,18 +185,16 @@ public final class FilterOperations {
      * Matches if value is in collection.
      */
     public static <T, V> Specification<T> in(Collection<V> values, Function<Root<T>, Expression<V>> fieldExtractor) {
-        return values == null || values.isEmpty()
-                ? null
-                : (root, query, cb) -> fieldExtractor.apply(root).in(values);
+        return values == null || values.isEmpty() ? null :
+                (root, query, cb) -> fieldExtractor.apply(root).in(values);
     }
 
     /**
      * Matches if value is NOT in collection.
      */
     public static <T, V> Specification<T> notIn(Collection<V> values, Function<Root<T>, Expression<V>> fieldExtractor) {
-        return values == null || values.isEmpty()
-                ? null
-                : (root, query, cb) -> cb.not(fieldExtractor.apply(root).in(values));
+        return values == null || values.isEmpty() ? null :
+                (root, query, cb) -> cb.not(fieldExtractor.apply(root).in(values));
     }
 
     // Date operations
@@ -243,8 +240,8 @@ public final class FilterOperations {
         };
     }
 
-
     // Fetch operations
+
     /**
      * Fetches a relation using left join.
      *
@@ -301,9 +298,9 @@ public final class FilterOperations {
      * joinContains("admin", root -> root.join("user"), join -> join.get("username"))
      * }</pre>
      *
-     * @param value           The substring to search for
-     * @param joinExtractor   Function to perform the join (e.g., root -> root.join("user"))
-     * @param fieldExtractor  Function to extract the field from the join (e.g., join -> join.get("username"))
+     * @param value          The substring to search for
+     * @param joinExtractor  Function to perform the join (e.g., root -> root.join("user"))
+     * @param fieldExtractor Function to extract the field from the join (e.g., join -> join.get("username"))
      * @return Specification with LIKE condition or null if value is empty
      */
     public static <T, J> Specification<T> joinContains(String value,

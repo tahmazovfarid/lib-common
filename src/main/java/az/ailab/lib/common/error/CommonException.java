@@ -1,6 +1,7 @@
 package az.ailab.lib.common.error;
 
-import az.ailab.lib.common.dto.response.ResponseWrapper;
+import az.ailab.lib.common.model.dto.response.ErrorResponse;
+import az.ailab.lib.common.model.dto.response.ResponseWrapper;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.EqualsAndHashCode;
