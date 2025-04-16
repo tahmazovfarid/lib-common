@@ -9,9 +9,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
@@ -62,7 +64,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * @author tahmazovfarid
  * @see org.slf4j.MDC
  */
+@Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
+@Slf4j
 public class TraceFilter extends OncePerRequestFilter {
 
     private static final Map<String, String> REQUEST_HEADERS_TO_MDC = Map.of(
