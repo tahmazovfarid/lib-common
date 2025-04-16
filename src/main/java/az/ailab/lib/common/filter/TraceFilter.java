@@ -1,5 +1,7 @@
 package az.ailab.lib.common.filter;
 
+import io.micrometer.tracing.Span;
+import io.micrometer.tracing.Tracer;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -10,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.core.Ordered;
@@ -65,8 +68,9 @@ import org.springframework.stereotype.Component;
  * @see org.slf4j.MDC
  */
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(Ordered.HIGHEST_PRECEDENCE + 10)
 @Slf4j
+@RequiredArgsConstructor
 public class TraceFilter implements Filter {
 
     private static final Map<String, String> REQUEST_HEADERS_TO_MDC = Map.of(
@@ -74,52 +78,68 @@ public class TraceFilter implements Filter {
             "User-Pin", "userPin"
     );
 
-    private static final Map<String, String> MDC_TO_RESPONSE_HEADERS = Map.of(
-            "traceId", "X-Trace-Id",
-            "spanId", "X-Span-Id"
-    );
+    private final Tracer tracer;
 
     @Override
     public void init(FilterConfig filterConfig) {
-        log.debug("TraceFilter initialized");
+        log.debug("TraceFilter initialized with Tracer: {}", tracer);
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
-        try {
-            processRequestHeaders(request);
-            filterChain.doFilter(request, response);
-            addResponseTraceHeaders(response);
-        } finally {
-            // Clean up only the MDC entries we created
-            clearMDC();
-        }
-    }
 
-    private void processRequestHeaders(ServletRequest request) {
         if (request instanceof HttpServletRequest httpRequest) {
-            REQUEST_HEADERS_TO_MDC.forEach((headerName, mdcKey) -> {
-                String headerValue = httpRequest.getHeader(headerName);
-                if (headerValue != null && !headerValue.isEmpty()) {
-                    MDC.put(mdcKey, headerValue);
-                }
-            });
+            processRequestHeaders(httpRequest);
+        }
+
+        try {
+            filterChain.doFilter(request, response);
+        } finally {
+            if (response instanceof HttpServletResponse httpResponse) {
+                addTraceHeaders(httpResponse);
+            }
+
+            // Clean up only the MDC entries we created
+            clearMdc();
         }
     }
 
-    private void addResponseTraceHeaders(ServletResponse response) {
-        if (response instanceof HttpServletResponse httpResponse) {
-            MDC_TO_RESPONSE_HEADERS.forEach((mdcKey, headerName) -> {
-                String value = MDC.get(mdcKey);
-                if (value != null) {
-                    httpResponse.setHeader(headerName, value);
-                }
-            });
+    private void processRequestHeaders(HttpServletRequest request) {
+        REQUEST_HEADERS_TO_MDC.forEach((headerName, mdcKey) -> {
+            String headerValue = request.getHeader(headerName);
+            if (headerValue != null && !headerValue.isEmpty()) {
+                MDC.put(mdcKey, headerValue);
+            }
+        });
+    }
+
+    private void addTraceHeaders(HttpServletResponse response) {
+        Span currentSpan = tracer.currentSpan();
+
+        if (currentSpan != null) {
+            String traceId = currentSpan.context().traceId();
+            String spanId = currentSpan.context().spanId();
+
+            if (traceId != null && !traceId.isEmpty()) {
+                response.setHeader("X-Trace-Id", traceId);
+                log.debug("Added trace ID to response: {}", traceId);
+            } else {
+                log.warn("No trace ID available from current span");
+            }
+
+            if (spanId != null && !spanId.isEmpty()) {
+                response.setHeader("X-Span-Id", spanId);
+                log.debug("Added span ID to response: {}", spanId);
+            } else {
+                log.warn("No span ID available from current span");
+            }
+        } else {
+            log.warn("No active span found when adding trace headers to response");
         }
     }
 
-    private void clearMDC() {
+    private void clearMdc() {
         REQUEST_HEADERS_TO_MDC.values().forEach(MDC::remove);
     }
 
