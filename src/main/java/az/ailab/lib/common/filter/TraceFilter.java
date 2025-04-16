@@ -68,7 +68,7 @@ import org.springframework.stereotype.Component;
  * @see org.slf4j.MDC
  */
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE + 10)
+@Order(Ordered.HIGHEST_PRECEDENCE + 2)
 @Slf4j
 @RequiredArgsConstructor
 public class TraceFilter implements Filter {
@@ -77,6 +77,8 @@ public class TraceFilter implements Filter {
             "X-Real-IP", "clientIp",
             "User-Pin", "userPin"
     );
+    private static final String TRACE_ID_HEADER = "X-Trace-Id";
+    private static final String SPAN_ID_HEADER = "X-Span-Id";
 
     private final Tracer tracer;
 
@@ -89,17 +91,19 @@ public class TraceFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
 
-        if (request instanceof HttpServletRequest httpRequest) {
-            processRequestHeaders(httpRequest);
+        if (!(request instanceof HttpServletRequest httpRequest) ||
+                !(response instanceof HttpServletResponse httpResponse)) {
+            filterChain.doFilter(request, response);
+            return;
         }
 
         try {
+            processRequestHeaders(httpRequest);
+            logTraceInfoIfDebugEnabled(httpRequest);
+            addTraceHeaders(httpResponse);
+
             filterChain.doFilter(request, response);
         } finally {
-            if (response instanceof HttpServletResponse httpResponse) {
-                addTraceHeaders(httpResponse);
-            }
-
             // Clean up only the MDC entries we created
             clearMdc();
         }
@@ -116,20 +120,19 @@ public class TraceFilter implements Filter {
 
     private void addTraceHeaders(HttpServletResponse response) {
         Span currentSpan = tracer.currentSpan();
-
         if (currentSpan != null) {
             String traceId = currentSpan.context().traceId();
             String spanId = currentSpan.context().spanId();
 
             if (traceId != null && !traceId.isEmpty()) {
-                response.setHeader("X-Trace-Id", traceId);
+                response.setHeader(TRACE_ID_HEADER, traceId);
                 log.debug("Added trace ID to response: {}", traceId);
             } else {
                 log.warn("No trace ID available from current span");
             }
 
             if (spanId != null && !spanId.isEmpty()) {
-                response.setHeader("X-Span-Id", spanId);
+                response.setHeader(SPAN_ID_HEADER, spanId);
                 log.debug("Added span ID to response: {}", spanId);
             } else {
                 log.warn("No span ID available from current span");
@@ -141,6 +144,23 @@ public class TraceFilter implements Filter {
 
     private void clearMdc() {
         REQUEST_HEADERS_TO_MDC.values().forEach(MDC::remove);
+    }
+
+    private void logTraceInfoIfDebugEnabled(HttpServletRequest request) {
+        if (log.isDebugEnabled()) {
+            Span currentSpan = tracer.currentSpan();
+            if (currentSpan != null) {
+                log.debug("Trace context: [{}] [{}] {} {}",
+                        currentSpan.context().traceId(),
+                        currentSpan.context().spanId(),
+                        request.getMethod(),
+                        request.getRequestURI());
+            } else {
+                log.debug("No active span for: {} {}",
+                        request.getMethod(),
+                        request.getRequestURI());
+            }
+        }
     }
 
 }
