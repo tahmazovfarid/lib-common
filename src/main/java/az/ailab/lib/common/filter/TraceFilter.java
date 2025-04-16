@@ -89,8 +89,8 @@ public class TraceFilter implements Filter {
             throws IOException, ServletException {
         try {
             processRequestHeaders(request);
-            addResponseTraceHeaders(response);
             filterChain.doFilter(request, response);
+            addResponseTraceHeaders(response);
         } finally {
             // Clean up only the MDC entries we created
             clearMDC();
