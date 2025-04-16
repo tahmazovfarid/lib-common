@@ -65,7 +65,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * @see org.slf4j.MDC
  */
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order
 @Slf4j
 public class TraceFilter extends OncePerRequestFilter {
 
