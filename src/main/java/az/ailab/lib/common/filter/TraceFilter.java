@@ -8,10 +8,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
+import lombok.NonNull;
 import org.slf4j.MDC;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * A servlet filter that provides distributed tracing and contextual logging capabilities.
@@ -58,13 +59,11 @@ import org.springframework.web.filter.GenericFilterBean;
  *     [Pin:AB12345]
  *     Payment request processed successfully for order #12345 * </pre>
  *
- * @see org.slf4j.MDC
- * @see org.springframework.web.filter.GenericFilterBean
- *
  * @author tahmazovfarid
+ * @see org.slf4j.MDC
  */
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class TraceFilter extends GenericFilterBean {
+public class TraceFilter extends OncePerRequestFilter {
 
     private static final Map<String, String> REQUEST_HEADERS_TO_MDC = Map.of(
             "X-Real-IP", "clientIp",
@@ -77,13 +76,15 @@ public class TraceFilter extends GenericFilterBean {
     );
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain)
+            throws ServletException, IOException {
 
         try {
             processRequestHeaders(request);
             addResponseTraceHeaders(response);
-            chain.doFilter(request, response);
+            filterChain.doFilter(request, response);
         } finally {
             // Clean up only the MDC entries we created
             clearMDC();
