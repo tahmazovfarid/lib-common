@@ -1,6 +1,8 @@
 package az.ailab.lib.common.filter;
 
+import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
@@ -8,13 +10,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * A servlet filter that provides distributed tracing and contextual logging capabilities.
@@ -65,9 +65,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * @see org.slf4j.MDC
  */
 @Component
-@Order
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
-public class TraceFilter extends OncePerRequestFilter {
+public class TraceFilter implements Filter {
 
     private static final Map<String, String> REQUEST_HEADERS_TO_MDC = Map.of(
             "X-Real-IP", "clientIp",
@@ -80,11 +80,13 @@ public class TraceFilter extends OncePerRequestFilter {
     );
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request,
-                                    @NonNull HttpServletResponse response,
-                                    @NonNull FilterChain filterChain)
-            throws ServletException, IOException {
+    public void init(FilterConfig filterConfig) {
+        log.debug("TraceFilter initialized");
+    }
 
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
+            throws IOException, ServletException {
         try {
             processRequestHeaders(request);
             addResponseTraceHeaders(response);
