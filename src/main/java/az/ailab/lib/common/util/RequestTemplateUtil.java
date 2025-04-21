@@ -36,7 +36,7 @@ public final class RequestTemplateUtil {
      * @return the formatted Basic Authorization header value
      * @throws NullPointerException if username or password is null
      */
-    public String resolveBasicAuth(String username, String password) {
+    public static String resolveBasicAuth(String username, String password) {
         if (username == null || password == null) {
             throw new NullPointerException("Username and password must not be null");
         }
@@ -46,7 +46,7 @@ public final class RequestTemplateUtil {
         return BASIC_PREFIX + encoded;
     }
 
-    public String resolveFormUrlEncoded(Map<String, String> params) {
+    public static String resolveFormUrlEncoded(Map<String, String> params) {
         if (params == null) {
             throw new NullPointerException("Params map must not be null");
         }
@@ -68,7 +68,7 @@ public final class RequestTemplateUtil {
      * @return a string in application/x-www-form-urlencoded format
      * @throws NullPointerException if key or value is null
      */
-    public String resolveFormUrlEncoded(String key, String value) {
+    public static String resolveFormUrlEncoded(String key, String value) {
         if (key == null || value == null) {
             throw new NullPointerException("Key and value must not be null");
         }
