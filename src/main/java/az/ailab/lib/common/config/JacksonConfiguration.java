@@ -42,21 +42,13 @@ public class JacksonConfiguration {
 
     @Bean
     public ObjectMapper objectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-
-        // Support for Java 8 date/time types
-        mapper.registerModule(new JavaTimeModule());
-
-        // Configure deserialization features
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        // This line prevents dates from being serialized as timestamps
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-
-        // Include colons (e.g., "2023-04-15T14:30:00+02:00" instead of "2023-04-15T14:30:00+0200")
-        mapper.setDateFormat(new StdDateFormat().withColonInTimeZone(true));
-
-        return mapper;
+        return new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .setDateFormat(new StdDateFormat().withColonInTimeZone(true))
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false)
+                .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
     }
 
 }
