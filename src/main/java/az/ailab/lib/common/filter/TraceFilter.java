@@ -1,5 +1,7 @@
 package az.ailab.lib.common.filter;
 
+import az.ailab.lib.common.constant.ExtendedHttpHeaders;
+import az.ailab.lib.common.constant.MdcConstants;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
 import jakarta.servlet.Filter;
@@ -74,11 +76,9 @@ import org.springframework.stereotype.Component;
 public class TraceFilter implements Filter {
 
     private static final Map<String, String> REQUEST_HEADERS_TO_MDC = Map.of(
-            "X-Real-IP", "clientIp",
-            "User-Pin", "userPin"
+            ExtendedHttpHeaders.X_REAL_IP_HEADER, MdcConstants.CLIENT_IP,
+            ExtendedHttpHeaders.X_USER_ID_HEADER, MdcConstants.USER_ID
     );
-    private static final String TRACE_ID_HEADER = "X-Trace-Id";
-    private static final String SPAN_ID_HEADER = "X-Span-Id";
 
     private final Tracer tracer;
 
@@ -125,14 +125,14 @@ public class TraceFilter implements Filter {
             String spanId = currentSpan.context().spanId();
 
             if (traceId != null && !traceId.isEmpty()) {
-                response.setHeader(TRACE_ID_HEADER, traceId);
+                response.setHeader(ExtendedHttpHeaders.X_TRACE_ID_HEADER, traceId);
                 log.debug("Added trace ID to response: {}", traceId);
             } else {
                 log.warn("No trace ID available from current span");
             }
 
             if (spanId != null && !spanId.isEmpty()) {
-                response.setHeader(SPAN_ID_HEADER, spanId);
+                response.setHeader(ExtendedHttpHeaders.X_SPAN_ID_HEADER, spanId);
                 log.debug("Added span ID to response: {}", spanId);
             } else {
                 log.warn("No span ID available from current span");
