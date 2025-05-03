@@ -64,4 +64,25 @@ public final class RequestContextUtil {
                 .orElse(RequestMethod.GET.name());
     }
 
+    /**
+     * Retrieves the client IP address from the current HTTP request.
+     * <p>
+     * This method first attempts to obtain the IP from the {@code X-Real-Ip} header,
+     * which is commonly set by reverse proxies (e.g., Nginx). If that header is not present,
+     * it falls back to the remote address provided by the servlet request via {@link HttpServletRequest#getRemoteAddr()}.
+     * </p>
+     * <p>
+     * <strong>Note:</strong> Ensure that this method is only called within the context of an active HTTP request,
+     * otherwise it may return {@code null}.
+     * </p>
+     *
+     * @return the resolved client IP address, or {@code null} if neither the header nor the servlet request is available
+     */
+    public static String getClientIp() {
+        return HeaderUtil.getOpt("X-Real-Ip")
+                        .orElse(ContextUtil.getServletRequest()
+                                .map(HttpServletRequest::getRemoteAddr)
+                                .orElse(null));
+    }
+
 }

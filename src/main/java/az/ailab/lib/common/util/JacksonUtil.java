@@ -54,12 +54,18 @@ public class JacksonUtil {
      * @return the field's text content
      * @throws IllegalArgumentException if the field is missing or empty
      */
+    @Deprecated
     public String readRequiredText(JsonNode node, String field) {
         JsonNode child = node.path(field);
         if (child.isMissingNode() || child.isNull() || child.asText().isEmpty()) {
             throw new IllegalArgumentException("Required JSON field '" + field + "' is missing or empty");
         }
         return child.asText();
+    }
+
+    @Deprecated
+    public String readText(JsonNode node, String field) {
+        return node.path(field).asText(null);
     }
 
     /**

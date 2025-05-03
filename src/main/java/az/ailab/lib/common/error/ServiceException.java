@@ -18,13 +18,18 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 @Getter
 public class ServiceException extends CommonException {
 
     private String code;
+
+    @Setter
     private List<ValidationError> errors = Collections.emptyList();
+
+    @Setter
     private Map<String, Object> details = Collections.emptyMap();
 
     public ServiceException(String code, Integer status, String message) {
@@ -79,6 +84,26 @@ public class ServiceException extends CommonException {
         return new ServiceException(HttpStatus.FORBIDDEN, resolveMessage(message, args));
     }
 
+    public static ServiceException unauthorized(String message, Object... args) {
+        return new ServiceException(HttpStatus.UNAUTHORIZED, resolveMessage(message, args));
+    }
+
+    public static ServiceException unauthorized(String message) {
+        return new ServiceException(HttpStatus.UNAUTHORIZED, message);
+    }
+
+    public static ServiceException unauthorized() {
+        return new ServiceException(HttpStatus.UNAUTHORIZED, "Unauthorized user!");
+    }
+
+    public static ServiceException badRequest(String message, Object... args) {
+        return new ServiceException(HttpStatus.BAD_REQUEST, resolveMessage(message, args));
+    }
+
+    public static ServiceException badRequest(String message) {
+        return new ServiceException(HttpStatus.BAD_REQUEST, message);
+    }
+
     public void addError(String property, String message) {
         addError(new ValidationError(property, message));
     }
@@ -90,23 +115,11 @@ public class ServiceException extends CommonException {
         errors.add(error);
     }
 
-    public void setErrors(List<ValidationError> errors) {
-        if (errors != null && errors.isEmpty()) {
-            this.errors = errors;
-        }
-    }
-
     public void addDetail(String key, Object value) {
         if (details.isEmpty()) {
             details = new HashMap<>();
         }
         details.put(key, value);
-    }
-
-    public void setDetails(Map<String, Object> details) {
-        if (details != null && details.isEmpty()) {
-            this.details = details;
-        }
     }
 
     @SuppressWarnings("unchecked")
