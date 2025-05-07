@@ -18,6 +18,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * <h2>Example Configuration</h2>
  * <pre>
  * swagger:
+ *   enabled: true
  *   title: "My API"
  *   description: "API for managing users"
  *   version: "1.0.0"
@@ -39,6 +40,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Setter
 @ConfigurationProperties(prefix = "swagger")
 public class SwaggerProperties {
+
+    /**
+     * Master switch for enabling/disabling Swagger.
+     * Default is true.
+     */
+    private boolean enabled = true;
 
     private String title = "API";
     private String description = "API Documentation";

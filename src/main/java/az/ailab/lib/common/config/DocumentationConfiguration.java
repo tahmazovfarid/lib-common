@@ -8,6 +8,8 @@ import io.swagger.v3.oas.models.examples.Example;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.customizers.OpenApiCustomizer;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -41,6 +43,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @RequiredArgsConstructor
+@ConditionalOnProperty(prefix = "swagger", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnMissingBean(OpenApiCustomizer.class)
 public class DocumentationConfiguration {
 
     private static final String OK = "200";
@@ -57,36 +61,34 @@ public class DocumentationConfiguration {
     @Bean
     public OpenApiCustomizer openApiCustomizer() {
         List<DocumentSample> documentSamples = swaggerProperties.getDocumentSamples();
-        return openApi -> {
-            documentSamples.forEach(document -> {
-                SwaggerUtil.getRequestBodyContent(openApi, document.getEndpoint())
-                        .ifPresent(content -> document.getDocumentMap()
-                                .forEach((key, value) -> {
-                                    Example example = new Example();
-                                    example.setDescription(ResourceUtil.readResourceFile(value.getRequestDescription()));
-                                    example.setValue(ResourceUtil.readResourceFile(value.getRequest()));
-                                    content.addExamples(key, example);
-                                }));
+        return openApi -> documentSamples.forEach(document -> {
+            SwaggerUtil.getRequestBodyContent(openApi, document.getEndpoint())
+                    .ifPresent(content -> document.getDocumentMap()
+                            .forEach((key, value) -> {
+                                Example example = new Example();
+                                example.setDescription(ResourceUtil.readResourceFile(value.getRequestDescription()));
+                                example.setValue(ResourceUtil.readResourceFile(value.getRequest()));
+                                content.addExamples(key, example);
+                            }));
 
-                SwaggerUtil.getResponseBodyContent(openApi, document.getEndpoint(), OK)
-                        .ifPresent(content -> document.getDocumentMap()
-                                .forEach((key, value) -> {
-                                    Example example = new Example();
-                                    example.setDescription(ResourceUtil.readResourceFile(value.getSuccessResponseDescription()));
-                                    example.setValue(ResourceUtil.readResourceFile(value.getSuccessResponse()));
-                                    content.addExamples(key, example);
-                                }));
+            SwaggerUtil.getResponseBodyContent(openApi, document.getEndpoint(), OK)
+                    .ifPresent(content -> document.getDocumentMap()
+                            .forEach((key, value) -> {
+                                Example example = new Example();
+                                example.setDescription(ResourceUtil.readResourceFile(value.getSuccessResponseDescription()));
+                                example.setValue(ResourceUtil.readResourceFile(value.getSuccessResponse()));
+                                content.addExamples(key, example);
+                            }));
 
-                SwaggerUtil.getResponseBodyContent(openApi, document.getEndpoint(), BAD_REQUEST)
-                        .ifPresent(content -> document.getDocumentMap()
-                                .forEach((key, value) -> {
-                                    Example example = new Example();
-                                    example.setDescription(ResourceUtil.readResourceFile(value.getFailResponseDescription()));
-                                    example.setValue(ResourceUtil.readResourceFile(value.getFailResponse()));
-                                    content.addExamples(key, example);
-                                }));
-            });
-        };
+            SwaggerUtil.getResponseBodyContent(openApi, document.getEndpoint(), BAD_REQUEST)
+                    .ifPresent(content -> document.getDocumentMap()
+                            .forEach((key, value) -> {
+                                Example example = new Example();
+                                example.setDescription(ResourceUtil.readResourceFile(value.getFailResponseDescription()));
+                                example.setValue(ResourceUtil.readResourceFile(value.getFailResponse()));
+                                content.addExamples(key, example);
+                            }));
+        });
     }
 
 }
