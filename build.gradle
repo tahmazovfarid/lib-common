@@ -38,6 +38,8 @@ dependencies {
     api "io.micrometer:micrometer-tracing:${micrometerVersion}"
     api "io.micrometer:micrometer-tracing-bridge-brave:${micrometerVersion}"
 
+    api "net.ttddyy:datasource-proxy:${dataSourceProxyVersion}"
+
     api "org.springframework.boot:spring-boot-starter-actuator"
     api "org.springframework.boot:spring-boot-starter-web"
     api "org.springframework.boot:spring-boot-starter-aop"
