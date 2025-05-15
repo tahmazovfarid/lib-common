@@ -4,8 +4,10 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import az.ailab.lib.common.config.DataSourceProxyConfig;
+import az.ailab.lib.common.config.properties.SqlLoggingProperties;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 
 /**
@@ -34,6 +36,7 @@ import org.springframework.context.annotation.Import;
  */
 @Target(TYPE)
 @Retention(RUNTIME)
+@EnableConfigurationProperties(SqlLoggingProperties.class)
 @Import(DataSourceProxyConfig.class)
 public @interface EnableSqlLogging {
     // Annotation only; no fields required.
