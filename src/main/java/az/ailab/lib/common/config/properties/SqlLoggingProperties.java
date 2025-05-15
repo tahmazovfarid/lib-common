@@ -1,9 +1,5 @@
 package az.ailab.lib.common.config.properties;
 
-import az.ailab.lib.common.model.vo.DocumentSample;
-import jakarta.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -29,6 +25,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * </p>
  */
 @Getter
+@Setter
 @ConfigurationProperties(prefix = "spring.jpa.sql-logging")
 public class SqlLoggingProperties {
 
@@ -36,8 +33,8 @@ public class SqlLoggingProperties {
      * Master switch for enabling/disabling Logging.
      * Default is false.
      */
-    private final boolean enabled = false;
+    private boolean enabled = false;
 
-    private final boolean showParameters = false;
+    private boolean showParameters = false;
 
 }
