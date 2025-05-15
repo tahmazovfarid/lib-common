@@ -1,2 +1,3 @@
 org.springframework.boot.env.EnvironmentPostProcessor=az.ailab.lib.common.config.SwaggerEnvironmentPostProcessor
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=az.ailab.lib.common.config.DataSourceProxyConfig
+org.springframework.boot.autoconfigure.AutoConfiguration.imports=az.ailab.lib.common.config.DataSourceProxyConfig
