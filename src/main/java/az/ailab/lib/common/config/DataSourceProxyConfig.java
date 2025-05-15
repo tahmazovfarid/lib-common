@@ -1,5 +1,6 @@
 package az.ailab.lib.common.config;
 
+import az.ailab.lib.common.config.properties.SqlLoggingProperties;
 import az.ailab.lib.common.listener.QueryExecutionListenerImpl;
 import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +23,14 @@ import org.springframework.core.env.Environment;
 @RequiredArgsConstructor
 @Slf4j
 @ConditionalOnProperty(
-        prefix = "spring.jpa.sql.logging",
+        prefix = "spring.jpa.sql-logging",
         name = "enabled",
         havingValue = "true"
 )
 public class DataSourceProxyConfig {
 
     private final Environment environment;
+    private final SqlLoggingProperties properties;
 
     /**
      * Wraps the primary DataSource with a ProxyDataSourceBuilder that attaches

@@ -52,7 +52,7 @@ public class QueryExecutionListenerImpl implements QueryExecutionListener {
                 .anyMatch(p -> p.equalsIgnoreCase("dev") || p.equalsIgnoreCase("local"));
 
         // Read SQL logging flags
-        boolean paramLogging = env.getProperty("spring.jpa.sql.logging.show-parameters", Boolean.class, false);
+        boolean paramLogging = env.getProperty("spring.jpa.sql-logging.show-parameters", Boolean.class, false);
 
         // Warn if logging enabled outside dev/local
         if (!isDevOrLocal) {

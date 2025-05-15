@@ -59,6 +59,7 @@ dependencies {
     api "io.github.openfeign:feign-jackson:${openFeignVersion}"
 
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${lombokMapStructBindingVersion}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapStructVersion}"
