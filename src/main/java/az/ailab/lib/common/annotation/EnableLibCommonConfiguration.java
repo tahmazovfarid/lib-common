@@ -48,6 +48,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
  * @see EnableLogging
  * @see EnableErrorHandler
  * @see EnableAspectJAutoProxy
+ * @see EnableSqlLogging
  * @see EnableSwaggerDocumentation
  */
 @Target(TYPE)
@@ -58,6 +59,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @EnableSwagger
 @EnableSwaggerDocumentation
 @EnableJacksonConfiguration
+@EnableSqlLogging
 @EnableAspectJAutoProxy
 public @interface EnableLibCommonConfiguration {
 
