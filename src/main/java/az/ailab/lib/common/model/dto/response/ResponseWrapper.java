@@ -1,6 +1,7 @@
 package az.ailab.lib.common.model.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,7 +28,7 @@ import org.springframework.http.HttpStatus;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ResponseWrapper<T> {
+public class ResponseWrapper<T> implements Serializable {
 
     private Integer statusCode;
     private LocalDateTime timeStamp;

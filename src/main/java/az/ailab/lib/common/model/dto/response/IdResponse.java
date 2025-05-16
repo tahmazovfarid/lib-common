@@ -1,5 +1,7 @@
 package az.ailab.lib.common.model.dto.response;
 
-public record IdResponse<T>(T id) {
+import java.io.Serializable;
+
+public record IdResponse<T>(T id) implements Serializable {
 
 }

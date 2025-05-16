@@ -14,7 +14,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * <h2>Example Configuration</h2>
  * <pre>
  * spring:
- *   jpa: true
+ *   jpa:
  *      sql-logging:
  *          enabled: true
  *          show-parameters: true

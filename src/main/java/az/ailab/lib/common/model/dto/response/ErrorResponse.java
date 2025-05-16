@@ -4,6 +4,7 @@ import az.ailab.lib.common.error.ServiceException;
 import az.ailab.lib.common.util.RequestContextUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -19,7 +20,7 @@ import org.springframework.http.HttpStatus;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ErrorResponse {
+public class ErrorResponse implements Serializable {
 
     private String code;
     private Integer status;

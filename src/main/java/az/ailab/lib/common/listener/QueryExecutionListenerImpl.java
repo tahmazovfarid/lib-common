@@ -26,7 +26,7 @@ import org.springframework.core.env.Environment;
  *   <li>Requires 'spring.jpa.sql.logging.show-parameters=true' to inline parameter values.</li>
  * </ul>
  *
- * @since 1.1.5
+ * @since 1.2.1
  * @author tahmazovfarid
  */
 @Slf4j
