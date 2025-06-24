@@ -126,19 +126,11 @@ public class TraceFilter implements Filter {
 
             if (traceId != null && !traceId.isEmpty()) {
                 response.setHeader(ExtendedHttpHeaders.X_TRACE_ID_HEADER, traceId);
-                log.debug("Added trace ID to response: {}", traceId);
-            } else {
-                log.warn("No trace ID available from current span");
             }
 
             if (spanId != null && !spanId.isEmpty()) {
                 response.setHeader(ExtendedHttpHeaders.X_SPAN_ID_HEADER, spanId);
-                log.debug("Added span ID to response: {}", spanId);
-            } else {
-                log.warn("No span ID available from current span");
             }
-        } else {
-            log.warn("No active span found when adding trace headers to response");
         }
     }
 

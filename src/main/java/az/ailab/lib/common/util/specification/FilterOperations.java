@@ -313,6 +313,22 @@ public final class FilterOperations {
                 );
     }
 
+    /**
+     * Checks if the field is null.
+     *
+     * <pre>
+     * {@code
+     * Specification<User> spec = isNull(root -> root.get("deletedAt"));
+     * }
+     * </pre>
+     *
+     * @param fieldExtractor Function to extract the field
+     * @return Specification that checks for null
+     */
+    public static <T, V> Specification<T> isNull(Function<Root<T>, Expression<V>> fieldExtractor) {
+        return (root, query, cb) -> cb.isNull(fieldExtractor.apply(root));
+    }
+
     //Helper
     public static boolean isEmpty(String value) {
         return StringUtils.isBlank(value);
