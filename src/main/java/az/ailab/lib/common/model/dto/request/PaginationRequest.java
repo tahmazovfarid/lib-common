@@ -1,5 +1,6 @@
 package az.ailab.lib.common.model.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
@@ -13,6 +14,7 @@ public record PaginationRequest(
         Integer size,
 
         @Pattern(regexp = "^[a-zA-Z]+$", message = "${sort.pattern}")
+        @JsonProperty("sort_by")
         String sortBy,
 
         @Pattern(regexp = "^(asc|desc)$", flags = Pattern.Flag.CASE_INSENSITIVE, message = "${direction.pattern}")
