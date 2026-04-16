@@ -18,8 +18,8 @@ import org.springframework.core.env.Environment;
 /**
  * A DataSource-Proxy listener that outputs SQL statements along with execution metrics
  * and optional inline parameters. Supports both DQL (SELECT) and DML (INSERT/UPDATE/DELETE).
- * <p>
- * Parameter inlining is controlled by Spring profiles and properties:
+ *
+ * <p>Parameter inlining is controlled by Spring profiles and properties:
  * <ul>
  *   <li>Enabled only when running in 'dev' or 'local' profiles.</li>
  *   <li>Requires 'spring.jpa.sql.logging.enabled=true' to enable logging.</li>
@@ -39,8 +39,8 @@ public class QueryExecutionListenerImpl implements QueryExecutionListener {
 
     /**
      * Constructs the listener and configures parameter logging based on the active environment.
-     * <p>
-     * Logs a warning if SQL logging or parameter inlining is enabled outside of 'dev'/'local'.
+     *
+     * <p>Logs a warning if SQL logging or parameter inlining is enabled outside of 'dev'/'local'.
      *
      * @param env the Spring Environment from which to read profiles and properties
      */
@@ -90,10 +90,9 @@ public class QueryExecutionListenerImpl implements QueryExecutionListener {
     @Override
     public void afterQuery(ExecutionInfo execInfo, List<QueryInfo> queryInfoList) {
         String rawSql = getRawSql(queryInfoList);
-        // Always print raw SQL, then metrics
-        String query = (paramLogEnabled && rawSql.contains("?"))
-                ? formatSqlWithParams(rawSql, queryInfoList)
-                : normalize(rawSql);
+        String query = (paramLogEnabled && rawSql.contains("?")) ?
+                formatSqlWithParams(rawSql, queryInfoList) :
+                normalize(rawSql);
 
         long timeMs = execInfo.getElapsedTime();
         int batchSize = execInfo.getBatchSize();
@@ -140,29 +139,18 @@ public class QueryExecutionListenerImpl implements QueryExecutionListener {
      */
     private String formatSqlWithParams(String rawSql, List<QueryInfo> queryInfoList) {
         String sqlLc = rawSql.toLowerCase();
-        // INSERT batching
         if (sqlLc.startsWith("insert") && sqlLc.contains("values")) {
-            int idx = sqlLc.indexOf("values");
-            String prefix = rawSql.substring(0, idx + "values".length());
-            List<String> tuples = new ArrayList<>();
-            for (QueryInfo qi : queryInfoList) {
-                for (List<ParameterSetOperation> paramOps : qi.getParametersList()) {
-                    if (paramOps.isEmpty()) continue;
-                    String tuple = paramOps.stream()
-                            .map(p -> formatValue(p.getArgs()[1]))
-                            .collect(Collectors.joining(", ", "(", ")"));
-                    tuples.add(tuple);
-                }
-            }
-            if (!tuples.isEmpty()) {
-                return normalize(prefix) + " " + String.join(", ", tuples) + ";" ;
+            String batchResult = buildBatchInsertSql(rawSql, sqlLc, queryInfoList);
+            if (batchResult != null) {
+                return batchResult;
             }
         }
-        // Generic inlining for other statements
         List<String> filled = new ArrayList<>();
         for (QueryInfo qi : queryInfoList) {
             for (List<ParameterSetOperation> paramOps : qi.getParametersList()) {
-                if (paramOps.isEmpty()) continue;
+                if (paramOps.isEmpty()) {
+                    continue;
+                }
                 String filledSql = rawSql;
                 for (ParameterSetOperation p : paramOps) {
                     Object val = p.getArgs()[1];
@@ -174,8 +162,36 @@ public class QueryExecutionListenerImpl implements QueryExecutionListener {
         if (!filled.isEmpty()) {
             return normalize(String.join(" ; ", filled)) + ";";
         }
-        // no params to inline
         return normalize(rawSql);
+    }
+
+    /**
+     * Builds a batched INSERT SQL string with inlined parameter tuples.
+     *
+     * @param rawSql the original INSERT SQL with '?' placeholders
+     * @param sqlLc the lowercase version of rawSql for prefix detection
+     * @param queryInfoList list of QueryInfo containing parameter sets
+     * @return formatted INSERT SQL, or null if no tuples could be built
+     */
+    private String buildBatchInsertSql(String rawSql, String sqlLc, List<QueryInfo> queryInfoList) {
+        int idx = sqlLc.indexOf("values");
+        String prefix = rawSql.substring(0, idx + "values".length());
+        List<String> tuples = new ArrayList<>();
+        for (QueryInfo qi : queryInfoList) {
+            for (List<ParameterSetOperation> paramOps : qi.getParametersList()) {
+                if (paramOps.isEmpty()) {
+                    continue;
+                }
+                String tuple = paramOps.stream()
+                        .map(p -> formatValue(p.getArgs()[1]))
+                        .collect(Collectors.joining(", ", "(", ")"));
+                tuples.add(tuple);
+            }
+        }
+        if (!tuples.isEmpty()) {
+            return normalize(prefix) + " " + String.join(", ", tuples) + ";";
+        }
+        return null;
     }
 
     /**
@@ -186,8 +202,12 @@ public class QueryExecutionListenerImpl implements QueryExecutionListener {
      * @return formatted SQL literal
      */
     private String formatValue(Object val) {
-        if (val == null) return "null";
-        if (val instanceof Number) return val.toString();
+        if (val == null) {
+            return "null";
+        }
+        if (val instanceof Number) {
+            return val.toString();
+        }
         String str = String.valueOf(val).replace("'", "\\'");
         return "'" + str + "'";
     }

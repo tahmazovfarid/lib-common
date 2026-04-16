@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.jdbc.autoconfigure.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -14,8 +14,8 @@ import org.springframework.core.env.Environment;
 /**
  * Configures a ProxyDataSource to intercept and log each SQL execution,
  * including elapsed time, batch size, and row/column counts.
- * <p>
- * This configuration is only loaded when SQL logging is enabled via
+ *
+ * <p>This configuration is only loaded when SQL logging is enabled via
  * 'spring.jpa.sql.logging.enabled=true'.
  */
 @Configuration

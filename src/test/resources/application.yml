@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: lib-common-test
+  profiles:
+    active: local
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+    sql-logging:
+      enabled: false
+
+swagger:
+  enabled: true
+  title: lib-common Test API
+  description: Integration test for lib-common-v2 library
+  version: 1.0.0
+  contact-name: Test
+  contact-email: test@example.com
+  contact-url: https://example.com
+  license: Apache 2.0
+  license-url: https://www.apache.org/licenses/LICENSE-2.0
+  terms-of-service-url: https://example.com/terms
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html

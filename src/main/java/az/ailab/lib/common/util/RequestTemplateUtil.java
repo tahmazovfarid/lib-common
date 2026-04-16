@@ -51,9 +51,9 @@ public final class RequestTemplateUtil {
             throw new NullPointerException("Params map must not be null");
         }
         return params.entrySet().stream()
-                .map(e -> URLEncoder.encode(e.getKey(), StandardCharsets.UTF_8)
-                        + "="
-                        + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
+                .map(e -> URLEncoder.encode(e.getKey(), StandardCharsets.UTF_8) +
+                        "=" +
+                        URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
                 .collect(Collectors.joining("&"));
     }
 

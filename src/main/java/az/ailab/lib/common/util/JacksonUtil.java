@@ -1,16 +1,15 @@
 package az.ailab.lib.common.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Generic JSON utility methods leveraging the application's configured {@link ObjectMapper}.
@@ -40,7 +39,7 @@ public class JacksonUtil {
     public JsonNode parseTree(String json) {
         try {
             return mapper.readTree(json);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("Failed to parse JSON: {}", json, e);
             throw new IllegalArgumentException("Invalid JSON", e);
         }
@@ -80,7 +79,7 @@ public class JacksonUtil {
     public <T> T fromJson(String json, Class<T> clazz) {
         try {
             return mapper.readValue(json, clazz);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("Failed to deserialize JSON to {}: {}", clazz.getSimpleName(), json, e);
             throw new IllegalArgumentException("Invalid JSON for type " + clazz.getSimpleName(), e);
         }
@@ -116,8 +115,7 @@ public class JacksonUtil {
             throw new IllegalArgumentException("JSON is not an object: " + json);
         }
         Set<String> fields = new LinkedHashSet<>();
-        Iterator<String> it = root.fieldNames();
-        it.forEachRemaining(fields::add);
+        fields.addAll(root.propertyNames());
         return fields;
     }
 
